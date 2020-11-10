@@ -1,0 +1,34 @@
+service: getPizzas
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-1
+  profile: xergioalex
+  environment:
+    REGION: ${self:provider.region}
+    PENDING_ORDER_QUEUE:
+      Ref: PendingOrdersQueue
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+      Resource: "arn:aws:sqs:${self:provider.region}:*:PendingOrdersQueue"
+
+functions:
+  makeOrder:
+    handler: handler.makeOrder
+    events:
+      - http:
+          method: post
+          path: order
+
+resources:
+  Resources:
+    PendingOrdersQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "PendingOrdersQueue"
