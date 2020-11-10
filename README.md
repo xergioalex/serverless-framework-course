@@ -59,5 +59,8 @@ Permissions should be configured using IAM.
 * Access politics
 
 
-## Environment Vars
+## Remove code
 
+```
+sls remove
+```
