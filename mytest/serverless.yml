@@ -1,0 +1,16 @@
+service: mytest
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: testuser
+
+functions:
+  testfunction:
+    handler: handler.testfunction
+    events:
+      - http:
+          method: get
+          path: testfunction

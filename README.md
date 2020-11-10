@@ -12,8 +12,7 @@ npm install -g serverless
 
 Setup serverless
 ```
-serverless config credentials --provider aws --profile $AWS_USER_PROFILE --key $AWS_KEY_ID --secret $AWS_SECRETkEY
-serverless config credentials --provider aws --profile xergioalex --key AKIAYKCVTUC7QAVEDKVL --secret 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
+serverless config credentials --provider aws --profile $AWS_USER_PROFILE --key $AWS_KEY_ID --secret $AWS_SECRET
 ```
 
 ## First project
@@ -58,3 +57,7 @@ Permissions should be configured using IAM.
 * Groups
 * Roles
 * Access politics
+
+
+## Environment Vars
+

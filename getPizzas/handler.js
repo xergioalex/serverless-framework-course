@@ -8,6 +8,7 @@ const QUEUE_URL = process.env.PENDING_ORDER_QUEUE
 
 module.exports.makeOrder = (event, context, callback) => {
   console.log('Request arrived...')
+  console.log(event.body)
   const orderId = uuidv4()
 
   const params = {
@@ -22,10 +23,21 @@ module.exports.makeOrder = (event, context, callback) => {
       const message = {
         orderId: orderId,
         messageId: data.MessageId,
+        name: event.boy.name,
+        address: event.boy.address,
+        pizzas: event.boy.pizzas,
       }
       sendResponse(200, message, callback)
     }
   })
+}
+
+module.exports.parseOrder = (event, context, callback) => {
+  console.log('Preparing order...')
+
+  console.log(event)
+
+  callback()
 }
 
 function sendResponse(statusCode, message, callback) {

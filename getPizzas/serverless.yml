@@ -1,4 +1,4 @@
-service: getPizzas
+service: getPizzasOrdersTest
 
 frameworkVersion: '2'
 
@@ -6,17 +6,19 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: eu-west-1
-  profile: xergioalex
+  profile: testuser
   environment:
     REGION: ${self:provider.region}
     PENDING_ORDER_QUEUE:
       Ref: PendingOrdersQueue
-
+    PENDING_ORDER_QUEUE_NAME: PendingOrdersQueue
+    COMPLETED_ORDER_TABLE: CompletedOrderTable
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "sqs:SendMessage"
-      Resource: "arn:aws:sqs:${self:provider.region}:*:PendingOrdersQueue"
+      Resource:
+        - "arn:aws:sqs:${self:provider.region}:*:${self:provider.environment.PENDING_ORDER_QUEUE_NAME}"
 
 functions:
   makeOrder:
@@ -25,10 +27,32 @@ functions:
       - http:
           method: post
           path: order
+  parseOrder:
+    handler: handler.parseOrder
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - PendingOrdersQueue
+              - Arn
+          batchSize: 1
 
 resources:
   Resources:
     PendingOrdersQueue:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "PendingOrdersQueue"
+        QueueName: "${self:provider.environment.PENDING_ORDER_QUEUE_NAME}"
+    CompletedOrdersTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: "orderId"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "orderId"
+          KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.COMPLETED_ORDER_TABLE}
