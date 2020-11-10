@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^14.14.7",
     "aws-sdk": "^2.788.0",
     "uuid": "^8.3.1"
   },

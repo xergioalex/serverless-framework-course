@@ -14,7 +14,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient()
 }
 */
 
-module.exports.saveCompletedOrder = order => {
+export const saveCompletedOrder = order => {
 	console.log('Save order')
 
 	order.delivery_status = 'READY_FOR_DELIVERY'
@@ -27,7 +27,7 @@ module.exports.saveCompletedOrder = order => {
 	return dynamo.put(params).promise()
 }
 
-module.exports.deliverOrder = orderId => {
+export const deliverOrder = orderId => {
 	console.log('Order called')
 
 	const params = {
@@ -52,7 +52,7 @@ module.exports.deliverOrder = orderId => {
 		})
 }
 
-module.exports.getOrder = orderId => {
+export const getOrder = orderId => {
 	console.log(`Get order: ${orderId}`);
 
 	const params = {

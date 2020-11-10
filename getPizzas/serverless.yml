@@ -84,3 +84,8 @@ resources:
         TableName: ${self:provider.environment.COMPLETED_ORDER_TABLE}
         StreamSpecification:
           StreamViewType: NEW_IMAGE
+
+
+plugins:
+  - serverless-plugin-typescript
+

@@ -1,16 +1,18 @@
 'use strict'
 
+import { saveCompletedOrder, deliverOrder, getOrder } from './orderMetadataManager'
+
 const { v4: uuidv4 } = require('uuid')
 const AWS = require('aws-sdk')
 
-const orderMetadataManager = require('./orderMetadataManager');
+// const orderMetadataManager = require('./orderMetadataManager');
 
 let sqs = new AWS.SQS({ region: process.env.REGION })
 const QUEUE_URL = process.env.PENDING_ORDER_QUEUE
 
 module.exports.makeOrder = (event, context, callback) => {
   console.log('Request arrived...')
-  const orderId = uuidv4()
+  const orderId: string = uuidv4()
 
   const body = JSON.parse(event.body)
 
@@ -48,8 +50,7 @@ module.exports.parseOrder = (event, context, callback) => {
 
   const order = JSON.parse(event.Records[0].body);
 
-	orderMetadataManager
-		.saveCompletedOrder(order)
+	saveCompletedOrder(order)
 		.then(data => {
 			callback();
 		})
@@ -69,8 +70,7 @@ module.exports.sendOrder = (event, context, callback) => {
 
 		const orderId = record.dynamodb.Keys.orderId.S;
 
-		orderMetadataManager
-			.deliverOrder(orderId)
+		deliverOrder(orderId)
 			.then(data => {
 				console.log(data);
 				callback();
@@ -97,8 +97,7 @@ module.exports.checkOrderState = (event, context, callback) => {
     sendResponse(400, message, callback)
   }
 
-  orderMetadataManager
-    .getOrder(orderId)
+  getOrder(orderId)
     .then(data => {
       console.log('Order data...')
       console.log(data)
